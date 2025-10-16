@@ -899,7 +899,7 @@
                         <div class="kv-label kv-problem">Standard KV Cache</div>
                         <div style="font-size: 1.1em; line-height: 1.6;">
                             <p>Memory = l × b x n x h x seq_length × 2 x 2</p>
-                            <div class="kv-metric">O(n)</div>
+                            <div class="kv-metric">O(n²)</div>
                             <p style="font-size: 0.95em; margin-top: 10px;">100k tokens = 400GB+</p>
                         </div>
                     </div>
@@ -908,7 +908,7 @@
                         <div class="kv-label kv-solution">Compressed KV</div>
                         <div style="font-size: 1.1em; line-height: 1.6;">
                             <p>Memory = l × b x latent_dim x seq_length × 2 </p>
-                            <div class="kv-metric">O(1)</div>
+                            <div class="kv-metric">O(n·d)</div>
                             <p style="font-size: 0.95em; margin-top: 10px;">100k tokens = 6GB</p>
                         </div>
                     </div>
