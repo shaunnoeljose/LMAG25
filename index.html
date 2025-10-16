@@ -490,18 +490,19 @@
 
         .bullet-list li {
             margin-bottom: 15px;
-            padding-left: 30px;
+            padding-left: 32px;
             position: relative;
             font-size: 1.2em;
-            line-height: 1.5;
+            line-height: 1.6;
         }
 
         .bullet-list li::before {
             content: '▸';
             position: absolute;
-            left: 0;
+            left: 8px;
             color: #84fab0;
-            font-size: 1.5em;
+            font-size: 1em;
+            line-height: 1.6;
         }
 
         .use-case-grid {
@@ -588,6 +589,71 @@
             margin: 15px 0;
             font-style: italic;
             font-size: 1.2em;
+        }
+
+        .kv-diagram {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+            margin: 30px 0;
+        }
+
+        .kv-box {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 25px;
+            border-radius: 15px;
+            border: 3px solid;
+            text-align: center;
+            min-width: 180px;
+        }
+
+        .kv-box.problem {
+            border-color: #f5576c;
+        }
+
+        .kv-box.solution {
+            border-color: #84fab0;
+        }
+
+        .kv-label {
+            font-size: 1.4em;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .kv-problem {
+            color: #f5576c;
+        }
+
+        .kv-solution {
+            color: #84fab0;
+        }
+
+        .kv-metric {
+            font-size: 1.8em;
+            font-weight: 700;
+            margin: 15px 0;
+            color: #ffd89b;
+        }
+
+        .memory-comparison {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin: 25px 0;
+        }
+
+        .memory-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 4px solid #8fd3f4;
+        }
+
+        .memory-item strong {
+            color: #84fab0;
+            font-size: 1.1em;
         }
 
         #slide12-grid-item p {
@@ -821,6 +887,61 @@
                         </p>
                     </div>
 
+                </div>
+            </div>
+        </div>
+
+        <div class="slide no-scroll">
+            <div class="slide-header">
+                <h2 class="slide-title">The Hidden Culprit: KV Cache 💾</h2>
+            </div>
+            <div class="slide-content">
+                <p class="headline">Why Even Inference Becomes a Memory Nightmare</p>
+                <p class="content-text">During inference, transformers cache Key-Value pairs for each token to speed up generation. With long sequences, this cache grows linearly in memory.</p>
+                
+                <div class="kv-diagram">
+                    <div class="kv-box problem">
+                        <div class="kv-label kv-problem">Standard KV Cache</div>
+                        <div style="font-size: 1.1em; line-height: 1.6;">
+                            <p>Memory = lx b x n x h x s x 2 x 2</p>
+                            <div class="kv-metric">O(n)</div>
+                            <p style="font-size: 0.95em; margin-top: 10px;">100k tokens = 400GB+</p>
+                        </div>
+                    </div>
+                    <div style="font-size: 3em; color: #ffd89b;">⚠️</div>
+                    <div class="kv-box solution">
+                        <div class="kv-label kv-solution">Compressed KV</div>
+                        <div style="font-size: 1.1em; line-height: 1.6;">
+                            <p>Memory = l x b × latent_dim × s x 2</p>
+                            <div class="kv-metric">O(1)</div>
+                            <p style="font-size: 0.95em; margin-top: 10px;">100k tokens = 6GB</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="memory-comparison">
+                    <div class="memory-item">
+                        <strong>Sequence Length:</strong> Grows with more tokens
+                        <p style="margin-top: 8px; color: #e0e0e0;">Every new word/token = more KV storage</p>
+                    </div>
+                    <div class="memory-item">
+                        <strong>Latent Bottleneck:</strong> Fixed size regardless of tokens
+                        <p style="margin-top: 8px; color: #e0e0e0;">Compress to a fixed "summary" of key info</p>
+                    </div>
+                    <div class="memory-item">
+                        <strong>Result for LLMs:</strong> Handle 100k+ context windows efficiently
+                        <p style="margin-top: 8px; color: #e0e0e0;">DeepSeek R1 can process massive documents</p>
+                    </div>
+                </div>
+
+                <div class="analogy-box" style="margin-top: 25px;">
+                    💡 "Standard KV cache is like writing down every conversation you've ever had word-for-word. MLA's compressed KV is like writing just the key plot points in your notebook."
+                </div>
+
+                <div style="margin-top: 20px; padding: 20px; background: rgba(132, 250, 176, 0.15); border-radius: 12px; border-left: 4px solid #84fab0;">
+                    <p class="content-text" style="font-size: 1.1em;">
+                        💡 <strong>Why This Matters for Earth Observation:</strong> Satellite time-series data = thousands of timesteps. Standard transformers can't fit this in memory. MLA's compressed KV cache is essential.
+                    </p>
                 </div>
             </div>
         </div>
@@ -1117,7 +1238,7 @@
                         </div>
                         <div style="background: rgba(255, 216, 155, 0.15); padding: 25px; border-radius: 15px; border: 2px solid #ffd89b;">
                             <h3 style="color: #ffd89b; font-size: 1.5em; margin-bottom: 15px;">MLA</h3>
-                            <p style="font-size: 1.1em;">Efficient attention for time-series analysis</p>
+                            <p style="font-size: 1.1em;">Efficient attention + compressed KV cache for long sequences</p>
                         </div>
                         <div style="background: rgba(245, 87, 108, 0.15); padding: 25px; border-radius: 15px; border: 2px solid #f5576c;">
                             <h3 style="color: #f5576c; font-size: 1.5em; margin-bottom: 15px;">MoE</h3>
@@ -1133,7 +1254,7 @@
 
         <div class="controls">
             <button class="nav-btn" id="prevBtn">← Previous</button>
-            <span class="slide-number" id="slideNumber">1 / 14</span>
+            <span class="slide-number" id="slideNumber">1 / 16</span>
             <button class="nav-btn" id="nextBtn">Next →</button>
         </div>
     </div>
