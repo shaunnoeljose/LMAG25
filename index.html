@@ -771,7 +771,7 @@
                 <div class="visual-container">
                     <div class="autoencoder-diagram">
                         <div class="ae-box">
-                            <div class="ae-image">High-Res<br>Image<br>2048×2048</div>
+                            <div class="ae-image">High-Res<br>Image<br>Input: 512×512<br>RGB (3 channels)</div>
                             <p>Input</p>
                         </div>
                         <div class="arrow">→</div>
@@ -782,7 +782,7 @@
                         <div class="arrow">→</div>
                         <div class="ae-box" style="border-color: #ffd89b;">
                             <div style="width: 40px; height: 60px; background: linear-gradient(180deg, #ffd89b, #f5576c); margin: 0 auto 10px; border-radius: 5px;"></div>
-                            <p style="color: #ffd89b; font-weight: 700;">Latent Space<br>(Bottleneck)</p>
+                            <p style="color: #ffd89b; font-weight: 700;">Latent Space<br>(Bottleneck)<br>Output: 32x32 dims</p>
                         </div>
                         <div class="arrow">→</div>
                         <div class="ae-box" style="border-color: #84fab0;">
@@ -791,7 +791,7 @@
                         </div>
                         <div class="arrow">→</div>
                         <div class="ae-box">
-                            <div class="ae-image" style="background: linear-gradient(45deg, #84fab0, #8fd3f4);">Reconstructed<br>Image</div>
+                            <div class="ae-image" style="background: linear-gradient(45deg, #84fab0, #8fd3f4);">Reconstructed<br>Output: 512×512<br>RGB</div>
                             <p>Output</p>
                         </div>
                     </div>
@@ -822,8 +822,8 @@
                         <p>Much faster to compare small summaries than massive images pixel by pixel</p>
                     </div>
                 </div>
-                <div style="margin-top: 30px; padding: 30px; background: rgba(132, 250, 176, 0.1); border-radius: 15px; border: 2px solid #84fab0;">
-                    <p class="content-text" style="text-align: center; font-size: 1.4em; color: #84fab0;">
+                <div style="margin-top: 140px; padding: 20px; background: rgba(132, 250, 176, 0.1); border-radius: 15px; border: 2px solid #84fab0;">
+                    <p class="content-text" style="text-align: center; font-size: 1.3em; color: #84fab0;">
                         🌍 <strong>Geospatial Connection:</strong> This is how we started teaching machines to recognize different types of land cover without manually defining every feature.
                     </p>
                 </div>
@@ -841,12 +841,7 @@
                     <div class="attention-viz" id="attentionViz">
                         </div>
                 </div>
-                <p class="content-text" style="margin-top: 20px; text-align: center; font-size: 1.1em; color: #8fd3f4;">
-                    <em>Hover over any patch to see self-attention: it connects to ALL other patches!</em>
-                </p>
-                <div class="analogy-box">
-                    💡 "An encoder is like reading a book chapter by chapter. A transformer reads the whole book at once, understanding how the first chapter connects to the last."
-                </div>
+                
             </div>
         </div>
 
@@ -903,7 +898,7 @@
                     <div class="kv-box problem">
                         <div class="kv-label kv-problem">Standard KV Cache</div>
                         <div style="font-size: 1.1em; line-height: 1.6;">
-                            <p>Memory = lx b x n x h x s x 2 x 2</p>
+                            <p>Memory = l × b x n x h x seq_length × 2 x 2</p>
                             <div class="kv-metric">O(n)</div>
                             <p style="font-size: 0.95em; margin-top: 10px;">100k tokens = 400GB+</p>
                         </div>
@@ -912,7 +907,7 @@
                     <div class="kv-box solution">
                         <div class="kv-label kv-solution">Compressed KV</div>
                         <div style="font-size: 1.1em; line-height: 1.6;">
-                            <p>Memory = l x b × latent_dim × s x 2</p>
+                            <p>Memory = l × b x latent_dim x seq_length × 2 </p>
                             <div class="kv-metric">O(1)</div>
                             <p style="font-size: 0.95em; margin-top: 10px;">100k tokens = 6GB</p>
                         </div>
@@ -983,32 +978,40 @@
                 <p class="content-text">MLA's efficiency enables processing months of satellite imagery in a single model—essential for applications requiring temporal context.</p>
                 <div class="use-case-grid">
                     <div class="use-case">
-                        <div class="use-case-title">🌊 Disaster Response</div>
-                        <p><strong>Problem:</strong> Need to track floods/hurricanes over days/weeks<br>
-                        <strong>Solution:</strong> MLA processes 30+ day sequences to map disaster extent and predict trajectory</p>
+                        <div class="use-case-title">🌊 Real-Time Flood Forecasting</div>
+                        <p><strong>Input:</strong> Daily SAR imagery (30-100 days)<br>
+                        <strong>Process:</strong> MLA maintains 30+ day history in compressed KV cache<br>
+                        <strong>Output:</strong> Flood extent predictions + trajectory forecast updated daily<br>
+                        <strong>Why MLA:</strong> Standard KV cache grows unbounded; MLA keeps constant memory</p>
                     </div>
                     <div class="use-case">
-                        <div class="use-case-title">🌾 Crop Monitoring</div>
-                        <p><strong>Problem:</strong> Crop health changes gradually across growing season<br>
-                        <strong>Solution:</strong> MLA analyzes entire 120-day growing cycles to predict yields and detect stress early</p>
+                        <div class="use-case-title">🌾 NDVI-Based Crop Health</div>
+                        <p><strong>Input:</strong> Bi-weekly multispectral (120-day season = 10 timesteps)<br>
+                        <strong>Process:</strong> Compute NDVI at each timestep; MLA learns temporal NDVI patterns<br>
+                        <strong>Output:</strong> Yield prediction + stress detection with 90-day lookback<br>
+                        <strong>Why MLA:</strong> Can attend to full season history for better predictions</p>
                     </div>
                     <div class="use-case">
-                        <div class="use-case-title">☁️ Cloud-Free Composites</div>
-                        <p><strong>Problem:</strong> Clouds obscure imagery; need multi-date analysis<br>
-                        <strong>Solution:</strong> MLA processes 50+ images efficiently to create cloud-free mosaics</p>
+                        <div class="use-case-title">🏜️ Multi-Year Change Detection</div>
+                        <p><strong>Input:</strong> Annual imagery across 5+ years (60+ timesteps)<br>
+                        <strong>Process:</strong> MLA compresses 5 years into fixed latent representation<br>
+                        <strong>Output:</strong> Detect subtle trends (desertification, urbanization)<br>
+                        <strong>Why MLA:</strong> Process full history; standard attention forces temporal subsampling</p>
                     </div>
                     <div class="use-case">
-                        <div class="use-case-title">❄️ Climate Change</div>
-                        <p><strong>Problem:</strong> Glacier retreat occurs over decades<br>
-                        <strong>Solution:</strong> MLA enables 30+ year time-series analysis to quantify ice loss rates</p>
+                        <div class="use-case-title">❄️ 30-Year Glacier Retreat</div>
+                        <p><strong>Input:</strong> Annual DEM + optical (30 years = 360+ images)<br>
+                        <strong>Process:</strong> MLA learns acceleration patterns from entire record<br>
+                        <strong>Output:</strong> Rate of retreat + anomaly detection<br>
+                        <strong>Why MLA:</strong> Maintains compressed history; enables inference on new years</p>
                     </div>
                 </div>
-                <div style="margin-top: 20px; padding: 20px; background: rgba(255, 216, 155, 0.15); border-radius: 12px; border-left: 4px solid #ffd89b;">
-                    <p class="content-text" style="font-size: 1.1em;">
-                        💡 <strong>Key Insight:</strong> Standard transformers can't handle these long sequences—MLA makes them tractable.
+                <div style="margin-top: 15px; padding: 18px; background: rgba(255, 216, 155, 0.15); border-radius: 12px; border-left: 4px solid #ffd89b;">
+                    <p class="content-text" style="font-size: 1.05em;">
+                        💡 <strong>Key Insight:</strong> These aren't just long sequences—they're scenarios where inference memory must stay constant as you add new data, and the full history improves predictions.
                     </p>
                 </div>
-                <div class="citation">Models using this: Sat-LLM, Prithvi Time-Series</div>
+                <div class="citation">Models: Sat-LLM, Prithvi Time-Series, Google Earth Engine API</div>
             </div>
         </div>
 
