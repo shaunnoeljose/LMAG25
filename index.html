@@ -822,7 +822,7 @@
                         <p>Much faster to compare small summaries than massive images pixel by pixel</p>
                     </div>
                 </div>
-                <div style="margin-top: 60px; padding: 20px; background: rgba(132, 250, 176, 0.1); border-radius: 15px; border: 2px solid #84fab0;">
+                <div style="margin-top: 140px; padding: 20px; background: rgba(132, 250, 176, 0.1); border-radius: 15px; border: 2px solid #84fab0;">
                     <p class="content-text" style="text-align: center; font-size: 1.3em; color: #84fab0;">
                         🌍 <strong>Geospatial Connection:</strong> This is how we started teaching machines to recognize different types of land cover without manually defining every feature.
                     </p>
@@ -903,8 +903,8 @@
                     <div class="kv-box problem">
                         <div class="kv-label kv-problem">Standard KV Cache</div>
                         <div style="font-size: 1.1em; line-height: 1.6;">
-                            <p>Memory = 2 × seq_length × hidden_dim</p>
-                            <div class="kv-metric">O(n)</div>
+                            <p>Memory = l x b x n x h × seq_length × 2 x 2</p>
+                            <div class="kv-metric">O(n²)</div>
                             <p style="font-size: 0.95em; margin-top: 10px;">100k tokens = 400GB+</p>
                         </div>
                     </div>
@@ -912,9 +912,9 @@
                     <div class="kv-box solution">
                         <div class="kv-label kv-solution">Compressed KV</div>
                         <div style="font-size: 1.1em; line-height: 1.6;">
-                            <p>Memory = 2 × latent_dim × hidden_dim</p>
-                            <div class="kv-metric">O(1)</div>
-                            <p style="font-size: 0.95em; margin-top: 10px;">100k tokens = 2GB</p>
+                            <p>Memory = l x b x latent_dim × seq_length × 2 </p>
+                            <div class="kv-metric">O(n)</div>
+                            <p style="font-size: 0.95em; margin-top: 10px;">100k tokens = 6GB</p>
                         </div>
                     </div>
                 </div>
