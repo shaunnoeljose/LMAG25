@@ -771,7 +771,7 @@
                 <div class="visual-container">
                     <div class="autoencoder-diagram">
                         <div class="ae-box">
-                            <div class="ae-image">High-Res<br>Image<br>Input: 512×512<br>RGB (3 channels)</div>
+                            <div class="ae-image">High-Res<br>Image<br>Input: 2048×2048<br>RGB (3 channels)</div>
                             <p>Input</p>
                         </div>
                         <div class="arrow">→</div>
@@ -782,7 +782,7 @@
                         <div class="arrow">→</div>
                         <div class="ae-box" style="border-color: #ffd89b;">
                             <div style="width: 40px; height: 60px; background: linear-gradient(180deg, #ffd89b, #f5576c); margin: 0 auto 10px; border-radius: 5px;"></div>
-                            <p style="color: #ffd89b; font-weight: 700;">Latent Space<br>(Bottleneck)<br>Output: 32x32 dims</p>
+                            <p style="color: #ffd89b; font-weight: 700;">Latent Space<br>(Bottleneck)<br>Output: 256 dims</p>
                         </div>
                         <div class="arrow">→</div>
                         <div class="ae-box" style="border-color: #84fab0;">
@@ -791,7 +791,7 @@
                         </div>
                         <div class="arrow">→</div>
                         <div class="ae-box">
-                            <div class="ae-image" style="background: linear-gradient(45deg, #84fab0, #8fd3f4);">Reconstructed<br>Output: 512×512<br>RGB</div>
+                            <div class="ae-image" style="background: linear-gradient(45deg, #84fab0, #8fd3f4);">Reconstructed<br>Output: 2048×2048<br>RGB</div>
                             <p>Output</p>
                         </div>
                     </div>
@@ -822,7 +822,7 @@
                         <p>Much faster to compare small summaries than massive images pixel by pixel</p>
                     </div>
                 </div>
-                <div style="margin-top: 140px; padding: 20px; background: rgba(132, 250, 176, 0.1); border-radius: 15px; border: 2px solid #84fab0;">
+                <div style="margin-top: 60px; padding: 20px; background: rgba(132, 250, 176, 0.1); border-radius: 15px; border: 2px solid #84fab0;">
                     <p class="content-text" style="text-align: center; font-size: 1.3em; color: #84fab0;">
                         🌍 <strong>Geospatial Connection:</strong> This is how we started teaching machines to recognize different types of land cover without manually defining every feature.
                     </p>
@@ -841,7 +841,12 @@
                     <div class="attention-viz" id="attentionViz">
                         </div>
                 </div>
-                
+                <p class="content-text" style="margin-top: 20px; text-align: center; font-size: 1.1em; color: #8fd3f4;">
+                    <em>Hover over any patch to see self-attention: it connects to ALL other patches!</em>
+                </p>
+                <div class="analogy-box">
+                    💡 "An encoder is like reading a book chapter by chapter. A transformer reads the whole book at once, understanding how the first chapter connects to the last."
+                </div>
             </div>
         </div>
 
@@ -898,8 +903,8 @@
                     <div class="kv-box problem">
                         <div class="kv-label kv-problem">Standard KV Cache</div>
                         <div style="font-size: 1.1em; line-height: 1.6;">
-                            <p>Memory = l × b x n x h x seq_length × 2 x 2</p>
-                            <div class="kv-metric">O(n²)</div>
+                            <p>Memory = 2 × seq_length × hidden_dim</p>
+                            <div class="kv-metric">O(n)</div>
                             <p style="font-size: 0.95em; margin-top: 10px;">100k tokens = 400GB+</p>
                         </div>
                     </div>
@@ -907,9 +912,9 @@
                     <div class="kv-box solution">
                         <div class="kv-label kv-solution">Compressed KV</div>
                         <div style="font-size: 1.1em; line-height: 1.6;">
-                            <p>Memory = l × b x latent_dim x seq_length × 2 </p>
-                            <div class="kv-metric">O(n·d)</div>
-                            <p style="font-size: 0.95em; margin-top: 10px;">100k tokens = 6GB</p>
+                            <p>Memory = 2 × latent_dim × hidden_dim</p>
+                            <div class="kv-metric">O(1)</div>
+                            <p style="font-size: 0.95em; margin-top: 10px;">100k tokens = 2GB</p>
                         </div>
                     </div>
                 </div>
@@ -1255,9 +1260,73 @@
             </div>
         </div>
 
+        <div class="slide">
+            <div class="slide-header">
+                <h2 class="slide-title">References & Further Reading</h2>
+            </div>
+            <div class="slide-content">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 25px; font-size: 0.95em; line-height: 1.8;">
+                    <div>
+                        <h3 style="color: #ffd89b; font-size: 1.3em; margin-bottom: 15px;">DeepSeek Innovations</h3>
+                        <div style="background: rgba(255, 255, 255, 0.08); padding: 15px; border-radius: 12px; border-left: 4px solid #ffd89b; margin-bottom: 15px;">
+                            <p><strong style="color: #84fab0;">Multi-Head Latent Attention (MLA)</strong><br>
+                            DeepSeek-V3 Technical Report (2024)<br>
+                            <span style="color: #a0d8ef; font-size: 0.9em;">Efficient KV cache compression for long-context inference</span></p>
+                        </div>
+                        <div style="background: rgba(255, 255, 255, 0.08); padding: 15px; border-radius: 12px; border-left: 4px solid #ffd89b; margin-bottom: 15px;">
+                            <p><strong style="color: #84fab0;">Mixture-of-Experts (MoE)</strong><br>
+                            DeepSeek-MoE: A Sparse Mixture of Experts Language Model (2024)<br>
+                            <span style="color: #a0d8ef; font-size: 0.9em;">Expert routing and sparse activation for efficiency</span></p>
+                        </div>
+                        <div style="background: rgba(255, 255, 255, 0.08); padding: 15px; border-radius: 12px; border-left: 4px solid #ffd89b;">
+                            <p><strong style="color: #84fab0;">DeepSeek-R1</strong><br>
+                            DeepSeek-R1: Incentivizing Reasoning Capability (2024)<br>
+                            <span style="color: #a0d8ef; font-size: 0.9em;">Long-context reasoning with reinforced learning</span></p>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 style="color: #ffd89b; font-size: 1.3em; margin-bottom: 15px;">Geospatial Applications</h3>
+                        <div style="background: rgba(255, 255, 255, 0.08); padding: 15px; border-radius: 12px; border-left: 4px solid #84fab0; margin-bottom: 15px;">
+                            <p><strong style="color: #84fab0;">Prithvi Foundation Models</strong><br>
+                            IBM & NASA Prithvi-V2 (2024)<br>
+                            <span style="color: #a0d8ef; font-size: 0.9em;">Multi-modal Earth observation; flood, fire, crop monitoring</span></p>
+                        </div>
+                        <div style="background: rgba(255, 255, 255, 0.08); padding: 15px; border-radius: 12px; border-left: 4px solid #84fab0; margin-bottom: 15px;">
+                            <p><strong style="color: #84fab0;">Google Satlas</strong><br>
+                            Satlas: MoE-inspired Global-Scale Mapping (2024)<br>
+                            <span style="color: #a0d8ef; font-size: 0.9em;">Efficient attention for billions of satellite images</span></p>
+                        </div>
+                        <div style="background: rgba(255, 255, 255, 0.08); padding: 15px; border-radius: 12px; border-left: 4px solid #84fab0; margin-bottom: 15px;">
+                            <p><strong style="color: #84fab0;">Clay Foundation Model</strong><br>
+                            Clay AI: Vision Transformers for Geospatial (2024)<br>
+                            <span style="color: #a0d8ef; font-size: 0.9em;">Self-supervised learning with efficient attention</span></p>
+                        </div>
+                        <div style="background: rgba(255, 255, 255, 0.08); padding: 15px; border-radius: 12px; border-left: 4px solid #84fab0;">
+                            <p><strong style="color: #84fab0;">Sat-LLM</strong><br>
+                            Sat-LLM: Multi-Modal Time-Series Analysis (2024)<br>
+                            <span style="color: #a0d8ef; font-size: 0.9em;">MLA + MoE-like routing for global coverage</span></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 25px; padding: 18px; background: rgba(132, 250, 176, 0.15); border-radius: 12px; border-left: 4px solid #84fab0;">
+                    <p style="font-size: 0.95em; color: #e0e0e0;">
+                        <strong style="color: #84fab0;">Key Concept Transfer:</strong> DeepSeek's MLA enables processing 100k+ token sequences with constant memory. Geospatial applications scale this to 360+ satellite timesteps (30-year records). MoE's routing strategy parallels multi-expert approaches in Prithvi for optical/SAR/thermal fusion.
+                    </p>
+                </div>
+
+                <div style="margin-top: 15px; padding: 15px; background: rgba(245, 87, 108, 0.1); border-radius: 10px; border-left: 4px solid #f5576c;">
+                    <p style="font-size: 0.9em; color: #a0d8ef; font-style: italic;">
+                        For latest updates and preprints: arXiv.org (search: DeepSeek, Prithvi, Satlas, Clay Foundation Model)
+                    </p>
+                </div>
+            </div>
+        </div>
+
         <div class="controls">
             <button class="nav-btn" id="prevBtn">← Previous</button>
-            <span class="slide-number" id="slideNumber">1 / 16</span>
+            <span class="slide-number" id="slideNumber">1 / 17</span>
             <button class="nav-btn" id="nextBtn">Next →</button>
         </div>
     </div>
